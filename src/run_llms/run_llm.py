@@ -1,8 +1,8 @@
 import argparse
 from deepseek_runner import DeepseekRunner
-#from llama_runner import LlamaRunner
-#from gpt_runner import GPTRunner
-#from gemini_runner import GeminiRunner
+from llama_runner import LlamaRunner
+from gpt_runner import GPTRunner
+from gemini_runner import GeminiRunner
 #from claude_runner import ClaudeRunner
 from hf_runner import HFRunner
 from gguf_runner import GGUFRunner
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         runner = GGUFRunner(
             args.temperature, 
             args.save_every, 
-            model_id=model_ids['salamandra'], 
+            model_id=model_ids['salamandra-7b-q4'], 
             filename="salamandra-7b-q4_k_m.gguf" # <-- Nombre exacto del archivo en HF
         )
     else:
