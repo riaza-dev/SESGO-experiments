@@ -66,7 +66,48 @@ class GGUFRunner(LLMRunner):
         # Extraer el texto de la respuesta
         return response["choices"][0]["message"]["content"]
     """
+    def run_one_prompt(self, llm, row):
+        # 1. Generamos el mensaje base usando tu plantilla
+        user_message = self.create_user_message(row.context, row.question, row.answer_info)
+        
+        # 2. Construimos un prompt directo (Texto crudo). 
+        # Añadimos "Respuesta seleccionada:" al final para forzarlo a completarlo con "Option X"
+        prompt_crudo = f"{self.system_message}\n\n{user_message}\n\nRespuesta seleccionada:"
+        
+        # 3. Failsafe de Temperatura: Evitamos el 0.0 estricto para modelos Q4
+        temp_segura = self.temperature if self.temperature > 0.0 else 0.1
+        
+        # 4. Usamos completación de texto (NO chat)
+        response = llm.create_completion(
+            prompt=prompt_crudo,
+            temperature=temp_segura,
+            max_tokens=30, # Reducimos esto. Solo necesitamos leer "Option 1: blabla", no 256 caracteres
+            stop=["\n\n", "##", "context"] # Si intenta generar su propio contexto, lo cortamos en seco
+        )
+        
+        # START-TO-DELETE
+        print("The response is.....")
+        print(response)
+        print("-------------------\n\n") 
+      
+        
+	    # END-TO-DELETE
 
+
+        # 5. Extraemos y limpiamos el texto generado
+        texto_respuesta = response["choices"][0]["text"].strip()
+
+        texto_respuesta = response["choices"][0]["message"]["content"]
+        print("The response_content is.....")
+        print(texto_respuesta)
+        print("-------------------\n\n")
+        
+        if not texto_respuesta:
+            return "ERROR: RESPUESTA_VACIA"
+            
+        return texto_respuesta
+
+    """
     def run_one_prompt(self, llm, row):
         user_message = self.create_user_message(row.context, row.question, row.answer_info)
         
@@ -104,3 +145,4 @@ class GGUFRunner(LLMRunner):
             return "ERROR: RESPUESTA_VACIA"
             
         return texto_respuesta
+    """
