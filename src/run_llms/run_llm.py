@@ -4,11 +4,14 @@ from llama_runner import LlamaRunner
 from gpt_runner import GPTRunner
 from gemini_runner import GeminiRunner
 from claude_runner import ClaudeRunner
+from hf_runner import HFRunner
+from gguf_runner import GGUFRunner
 
 model_ids = {
     'llama': "meta-llama/Llama-3.1-8B-Instruct",
     'deepseek': "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
     'llama_uncensored': "Orenguteng/Llama-3.1-8B-Lexi-Uncensored",
+    'salamandra-7b-q4': "capa8/salamandra-7b-Q4_K_M-GGUF"
 }
 
 if __name__ == '__main__':
@@ -34,6 +37,16 @@ if __name__ == '__main__':
         runner = GeminiRunner(args.temperature, args.save_every, model_id = "gemini-2.0-flash")
     elif args.model_id == 'claude':
         runner = ClaudeRunner(args.temperature, args.save_every, model_id = 'claude-3-5-haiku-20241022')
+    elif args.model_id == 'gemma':
+        runner = HFRunner(args.temperature, args.save_every, model_id=model_ids['gemma'])
+    elif args.model_id == 'salamandra-7b-q4':
+        # Para los modelos GGUF, debemos pasar el nombre exacto del archivo que está dentro del repositorio
+        runner = GGUFRunner(
+            args.temperature, 
+            args.save_every, 
+            model_id=model_ids['salamandra'], 
+            filename="salamandra-7b-q4_k_m.gguf" # <-- Nombre exacto del archivo en HF
+        )
     else:
         raise ValueError("Invalid model ID. Choose from: llama, llama_uncensored, gpt, deepseek, gemini")
     
