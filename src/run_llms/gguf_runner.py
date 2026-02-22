@@ -31,6 +31,7 @@ class GGUFRunner(LLMRunner):
         )
         return llm
 
+    """
     def run_one_prompt(self, llm, row):
         user_message = self.create_user_message(row.context, row.question, row.answer_info)
         
@@ -64,3 +65,42 @@ class GGUFRunner(LLMRunner):
         
         # Extraer el texto de la respuesta
         return response["choices"][0]["message"]["content"]
+    """
+
+    def run_one_prompt(self, llm, row):
+        user_message = self.create_user_message(row.context, row.question, row.answer_info)
+        
+        # TRUCO: Combinamos el system_message y el user_message en un solo bloque.
+        # Esto soluciona el problema de los modelos GGUF que ignoran el rol "system".
+        prompt_combinado = f"{self.system_message}\n\n{user_message}"
+        
+        messages = [
+            {"role": "user", "content": prompt_combinado}
+        ]
+        
+        # Generar la respuesta
+        response = llm.create_chat_completion(
+            messages=messages,
+            temperature=self.temperature,
+            max_tokens=256
+        )
+
+	    # START-TO-DELETE
+        print("The response is.....")
+        print(response)
+        print("-------------------\n\n") 
+      
+        response_content = response["choices"][0]["message"]["content"]
+        print("The response_content is.....")
+        print(response_content)
+        print("-------------------\n\n")
+	    # END-TO-DELETE
+
+        # Extraer el texto y limpiarlo de espacios o saltos de línea extra al inicio y final
+        texto_respuesta = response["choices"][0]["message"]["content"].strip()
+        
+        # Fallback de seguridad por si el modelo sigue respondiendo en blanco
+        if not texto_respuesta:
+            return "ERROR: RESPUESTA_VACIA"
+            
+        return texto_respuesta
