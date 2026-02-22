@@ -1,9 +1,9 @@
 import argparse
 from deepseek_runner import DeepseekRunner
-from llama_runner import LlamaRunner
-from gpt_runner import GPTRunner
-from gemini_runner import GeminiRunner
-from claude_runner import ClaudeRunner
+#from llama_runner import LlamaRunner
+#from gpt_runner import GPTRunner
+#from gemini_runner import GeminiRunner
+#from claude_runner import ClaudeRunner
 from hf_runner import HFRunner
 from gguf_runner import GGUFRunner
 
