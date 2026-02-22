@@ -39,12 +39,28 @@ class GGUFRunner(LLMRunner):
             {"role": "user", "content": user_message},
         ]
         
+        print("Executing run_one_prompt...\n")
+
+        print(messages)
+        print("-------------------\n\n")
+
+        
+
         # Llama.cpp tiene una API compatible con el formato de chat de OpenAI
         response = llm.create_chat_completion(
             messages=messages,
             temperature=self.temperature,
             max_tokens=256
         )
+
+        print("The response is.....")
+        print(response)
+        print("-------------------\n\n") 
+      
+        response_content = response["choices"][0]["message"]["content"]
+        print("The response_content is.....")
+        print(response_content)
+        print("-------------------\n\n")
         
         # Extraer el texto de la respuesta
         return response["choices"][0]["message"]["content"]
